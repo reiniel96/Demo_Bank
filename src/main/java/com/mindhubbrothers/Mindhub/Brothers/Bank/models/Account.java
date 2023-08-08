@@ -1,7 +1,6 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,20 +13,18 @@ public class Account {
     @GenericGenerator(name = "native",strategy = "native")
     private long id;
     private String number;
-    private  String creationDate;
     private String Balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
 
-    public Account(String number, LocalDate now, String Balance) {
+    public Account(String number, String Balance, LocalDate LocalDate) {
     }
 
-    public Account(long id, String number, String creationDate, String balance) {
+    public Account(long id, String number, String balance, LocalDate localDate) {
         this.id = id;
         this.number = number;
         this.Balance = balance;
-        this.creationDate =creationDate;
     }
 
     public Account() {
@@ -46,13 +43,6 @@ public class Account {
         this.number = number;
     }
 
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
 
     public String getBalance() {
         return Balance;

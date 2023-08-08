@@ -28,7 +28,7 @@ public class MindhubBrothersBankApplication {
 			clientRepository.save(client1);
 
 			//Se crea la cuenta
-			Account account1 = new Account();
+			Account account1 = new Account("12456","784512", LocalDate.now());
 			//Se guarda en la bd
 
 			//Agregar la cuenta al cliente
