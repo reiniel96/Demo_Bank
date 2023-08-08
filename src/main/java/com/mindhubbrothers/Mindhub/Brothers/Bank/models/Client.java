@@ -2,10 +2,9 @@ package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 //Una clase dentro de la Base de Datos
 @Entity
@@ -22,6 +21,8 @@ public class Client {
     private String direction;
     private String birthdate;
     private String cp;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
+    private Set<Account> accounts = new HashSet<>();
 
 
 
@@ -52,10 +53,6 @@ public class Client {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -106,6 +103,15 @@ public class Client {
         this.cp = cp;
     }
 
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void AddAccount(Account account){
+        account.setClient(this);
+        this.accounts.add(account);
+    }
+
     @Override
     public String toString() {
         return "Client{" +
@@ -118,6 +124,7 @@ public class Client {
                 ", cp='" + cp + '\'' +
                 '}';
     }
+
 }
 
 
