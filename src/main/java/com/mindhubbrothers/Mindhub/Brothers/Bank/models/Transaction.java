@@ -16,7 +16,8 @@ public class Transaction {
     private String amount;
     private String description;
 
-    
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Account account;
 
 
   enum Level{

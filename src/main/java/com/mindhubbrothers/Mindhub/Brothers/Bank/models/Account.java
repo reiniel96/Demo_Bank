@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,8 @@ public class Account {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    private List<Transaction> transactions;
 
 
     public Account(long id, String number, double balance, LocalDate localDate) {
