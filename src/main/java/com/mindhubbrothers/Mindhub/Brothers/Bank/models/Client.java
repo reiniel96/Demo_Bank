@@ -66,12 +66,12 @@ public class Client {
     }
 
 
-    public String getCp() {
+    public String getEmail() {
         return email;
     }
 
-    public void setCp(String cp) {
-        this.email = cp;
+    public void setCp(String email) {
+        this.email = email;
     }
 
     public Set<Account> getAccounts() {

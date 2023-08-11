@@ -4,6 +4,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Account {
@@ -13,22 +15,23 @@ public class Account {
     @GenericGenerator(name = "native",strategy = "native")
     private long id;
     private String number;
-    private String Balance;
+    private double balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
 
-    public Account(String number, String Balance, LocalDate LocalDate) {
-    }
 
-    public Account(long id, String number, String balance, LocalDate localDate) {
+    public Account(long id, String number, double balance, LocalDate localDate) {
         this.id = id;
         this.number = number;
-        this.Balance = balance;
+        this.balance = balance;
     }
 
     public Account() {
 
+    }
+
+    public Account(String number, String number1, LocalDate now) {
     }
 
     public long getId() {
@@ -44,12 +47,12 @@ public class Account {
     }
 
 
-    public String getBalance() {
-        return Balance;
+    public double getBalance() {
+        return balance;
     }
 
     public void setBalance(String balance) {
-        Balance = balance;
+        balance = balance;
     }
 
     public void setClient(Client client) {
