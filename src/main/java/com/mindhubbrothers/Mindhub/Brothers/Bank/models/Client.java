@@ -3,8 +3,11 @@ package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.DoubleStream;
 
 //Una clase dentro de la Base de Datos
 @Entity
@@ -20,6 +23,9 @@ public class Client {
     private String email;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
     private Set<Account> accounts = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
+    private List<ClientLoan> clientLoans = new ArrayList<>();
 
 
 
