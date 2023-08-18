@@ -1,36 +1,42 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
+import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.TransactionType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction;
+
+import java.time.LocalDate;
+
 
 public class TransactionDTO {
 
     private Long id;
-    private Enum type;
-    private String amount;
+    private TransactionType type;
+    private Double amount;
+    private LocalDate date;
     private String description;
+    public TransactionDTO(){};
 
-    enum Level {
-        CREDIT,
-        DEBIT
-    }
-
-    public TransactionDTO(TransactionDTO transaction) {
-        id = transaction.getId();
-        type = transaction.getType();
-        amount = transaction.getAmount();
-        description = transaction.getDescription();
+    public TransactionDTO(Transaction transaction) {
+        this.id = transaction.getId();
+        this.type = transaction.getType();
+        this.amount = transaction.getAmount();
+        this.date = transaction.getDate();
+        this.description = transaction.getDescription();
     }
 
     public Long getId() {
         return id;
     }
 
-    public Enum getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public String getAmount() {
+    public Double getAmount() {
         return amount;
+    }
+
+    public LocalDate getDate() {
+        return date;
     }
 
     public String getDescription() {

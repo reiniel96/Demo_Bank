@@ -1,61 +1,68 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
+import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.TransactionType;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
-import java.awt.*;
 import java.time.LocalDate;
+
 @Entity
 public class Transaction {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native",strategy = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private Enum type;
-    private String amount;
+    private TransactionType type;
+    private Double amount;
     private String description;
-
+    private LocalDate date;
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="account_id")
     private Account account;
 
+    public Transaction(){};
 
-  enum Level{
-      CREDIT,
-      DEBIT
-  }
-
-    public Transaction (String type, String amount, String description ,LocalDate LocalDate) {
-    }
-
-    public Transaction(long id, Enum type, String amount, String description,LocalDate localDate) {
-        this.id = id;
+    public Transaction(TransactionType type, Double amount, String description) {
         this.type = type;
-        this.amount = amount;
-        this.description= description;
+        setAmount( amount, type);
+        this.description = description;
+        this.date = LocalDate.now();
     }
-    public Transaction (){
 
-    }
 
     public Long getId() {
         return id;
     }
 
-    public Enum getType() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(Enum type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
 
-    public String getAmount() {
+    public LocalDate getDate() {
+        return date;
+    }
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public void setAmount(Double amount, TransactionType type) {
+
+        this.amount = this.type.equals(TransactionType.CREDIT)? amount : -amount;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getDescription() {

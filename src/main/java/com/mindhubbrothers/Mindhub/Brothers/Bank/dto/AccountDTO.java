@@ -1,29 +1,47 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
+
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account;
 
-public class AccountDTO {
-    private long id;
-    private String number;
-    private String balance;
+import java.time.LocalDate;
+import java.util.List;
 
-    public AccountDTO(Account account){
-        id = account.getId();
-        number = account.getNumber();
-        balance = String.valueOf(account.getBalance());
+
+import static java.util.stream.Collectors.toList;
+
+public class AccountDTO {
+    private Long id;
+    private String number;
+    private Double balance;
+    private LocalDate date;
+    private List<TransactionDTO> transactions;
+
+    public AccountDTO(Account account) {
+        this.id = account.getId();
+        this.number = account.getNumber();
+        this.balance = account.getBalance();
+        this.date = account.getDate();
+        this.transactions= account.getTransactions().stream()
+                .map(TransactionDTO::new)
+                .collect(toList());
     }
 
-
-
-    public long getId() {
+    public Long getId(){
         return id;
     }
-
     public String getNumber() {
         return number;
     }
 
-    public String getBalance() {
+    public Double getBalance() {
         return balance;
+    }
+
+    public LocalDate getDate(){
+        return date;
+    }
+
+    public List<TransactionDTO> getTransactions() {
+        return transactions;
     }
 }

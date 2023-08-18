@@ -1,62 +1,48 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
+import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.LoanType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class ClientLoan {
+public class ClientLoan{
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-
-    private double payments;
-    private double amount;
-
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private Loan loan;
+    private com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan;
 
-    public ClientLoan(){
+    public ClientLoan(){}
 
-    }
-
-    public ClientLoan(Long id, double payments, double amount, Client client, Loan loan) {
-        this.id = id;
-        this.payments = payments;
-        this.amount = amount;
-        this.client = client;
-        this.loan = loan;
-    }
 
     public Long getId() {
         return id;
     }
 
-    public double getPayments() {
-        return payments;
-    }
-
-    public void setPayments(double payments) {
-        this.payments = payments;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
 
 
     public Client getClient() {
         return client;
     }
 
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
-    public Loan getLoan() {
+    public com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan getLoan() {
         return loan;
     }
 
+    public void setLoan(com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan) {
+        this.loan = loan;
+    }
 
 }

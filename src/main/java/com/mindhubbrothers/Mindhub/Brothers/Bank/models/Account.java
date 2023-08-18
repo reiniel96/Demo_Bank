@@ -5,60 +5,89 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 public class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native",strategy = "native")
-    private long id;
+    @GenericGenerator(name = "native", strategy = "native")
+    private Long id;
     private String number;
-    private double balance;
+    private Double balance;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private Client client;
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
-    private List<Transaction> transactions;
+    @JoinColumn(name="owner_id")
+    private com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client owner;
 
+    @OneToMany(mappedBy="account", fetch=FetchType.EAGER)
+    private Set<com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction> transactions = new HashSet<>();
 
-    public Account(long id, String number, double balance, LocalDate localDate) {
-        this.id = id;
-        this.number = number;
+    public Account(){};
+
+    public Account(String number,Double balance, LocalDate date) {
+        this.number=number;
         this.balance = balance;
-    }
-
-    public Account() {
-
-    }
-
-    public Account(String number, String number1, LocalDate now) {
-    }
-
-    public long getId() {
-        return id;
+        this.date = date;
     }
 
     public String getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 
-    public double getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
-        balance = balance;
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
-    public void setClient(Client client) {
+    public LocalDate getDate() {
+        return date;
     }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id='" + id + '\'' +
+                ", balance=" + balance +
+                ", number=" + number +
+                ", date=" + date +
+                '}';
+    }
+
+    public com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client getOwner() {
+
+        return owner;
+    }
+
+    public void setOwner(com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client owner) {
+        this.owner = owner;
+    }
+
+    public Set<com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void addTransaction(com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction transaction) {
+        transaction.setAccount(this);
+        transactions.add(transaction);
+
+    }
+
 }
-

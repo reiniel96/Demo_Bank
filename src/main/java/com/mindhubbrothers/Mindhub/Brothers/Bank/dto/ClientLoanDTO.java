@@ -1,42 +1,44 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.LoanType;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ClientLoanDTO {
+
     private Long id;
+    private String name;
+    private Double amount;
+    private List<Integer> payments;
 
-    private double payments;
-    private double amount;
+    private long loanId;
 
-    private List<ClientDTO> clients;
-    private List<LoanDTO> loans;
-
-    public ClientLoanDTO (ClientLoan clientLoan){
-        id = clientLoan.getId();
-        payments= clientLoan.getPayments();
-        amount = clientLoan.getAmount();
-
+    public ClientLoanDTO(ClientLoan clientLoan){
+        this.id = clientLoan.getId();
+        this.loanId = clientLoan.getLoan().getId();
+        this.name = clientLoan.getLoan().getType().name();
+        this.amount = clientLoan.getLoan().getMaxAmount();
+        this.payments = clientLoan.getLoan().getPayments();
     }
 
     public Long getId() {
         return id;
     }
 
-    public double getPayments() {
-        return payments;
+    public Long getLoanId() {
+        return loanId;
     }
 
-    public double getAmount() {
+    public String getName() {
+        return name;
+    }
+
+    public Double getAmount() {
         return amount;
     }
-    public Set<ClientDTO> getClient(){return (Set<ClientDTO>) clients;
-    }
-    public Set<LoanDTO> getLoan(){
-        return (Set<LoanDTO>) loans;
+
+    public List<Integer> getPayments() {
+        return payments;
     }
 }

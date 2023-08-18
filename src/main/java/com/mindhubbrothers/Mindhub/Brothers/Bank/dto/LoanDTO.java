@@ -1,19 +1,21 @@
+
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan;
+import java.util.List;
 
-public class LoanDTO {
+public class LoanDTO{
+
     private Long id;
     private String name;
-    private double maxAmount;
-    private double payments;
+    private Double maxAmount;
+    private List<Integer> payments;
 
-    public LoanDTO (Loan loan) {
-        id= Loan.getId();
-        name = Loan.getName();
-        maxAmount = Loan.getMaxAmount();
-        payments= Loan.getPayments();
-
+    public LoanDTO(Loan loan){
+        this.id = loan.getId();
+        this.name = loan.getName();
+        this.maxAmount = loan.getMaxAmount();
+        this.payments = loan.getPayments();
     }
 
     public Long getId() {
@@ -24,11 +26,11 @@ public class LoanDTO {
         return name;
     }
 
-    public double getMaxAmount() {
+    public Double getMaxAmount() {
         return maxAmount;
     }
 
-    public double getPayments() {
+    public List<Integer> getPayments() {
         return payments;
     }
 }

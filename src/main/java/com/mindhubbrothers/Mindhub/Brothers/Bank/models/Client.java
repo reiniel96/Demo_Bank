@@ -3,102 +3,111 @@ package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.DoubleStream;
 
-//Una clase dentro de la Base de Datos
 @Entity
 public class Client {
 
-     //Attribute
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native",strategy = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private String name;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private String email;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
+
+    @OneToMany(mappedBy="owner", fetch=FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "client")
-    private List<ClientLoan> clientLoans = new ArrayList<>();
+    @OneToMany (mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan> clientLoans = new HashSet<>();
 
+    @OneToMany(mappedBy="cardHolder", fetch=FetchType.EAGER)
+    private Set<Card> cards = new HashSet<>();
 
+    public Client(){};
 
-    //Builder
-
-    public Client(Long id,String name, String lastname, String dni, String direction, String birthdate, String email) {
-        this.id = id;
-        this.name = name;
-        this.lastname = lastname;
+    public Client( String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
-
-
     }
-
-    public Client(String name, String lastname, String dni, String direction, String birthdate, String cp) {
-
-    }
-
-    public Client() {
-
-    }
-
-
-    //Methods
-
     public Long getId() {
         return id;
     }
-
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
-
 
     public String getEmail() {
         return email;
     }
 
-    public void setCp(String email) {
+    public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Set<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void AddAccount(Account account){
-        account.setClient(this);
-        this.accounts.add(account);
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", cp='" + email + '\'' +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return Objects.equals(firstName, client.firstName) && Objects.equals(lastName, client.lastName) && Objects.equals(email, client.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email);
+    }
+
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void addAccount(Account account) {
+        account.setOwner(this);
+        accounts.add(account);
+    }
+    public Set<com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void addClientLoan(com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan clientLoan) {
+        clientLoan.setClient(this);
+        clientLoans.add(clientLoan);
+    }
+    public Set<Card> getCards() {
+        return cards;
+    }
+
+    public void addCard(Card card) {
+        card.addCardHolder(this);
+        cards.add(card);
+    }
+
+
 }
-
-
