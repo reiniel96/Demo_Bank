@@ -13,7 +13,7 @@ public class ClientDTO  {
     private String lastName;
     private String email;
 
-    private List<com.mindhubbrothers.Mindhub.Brothers.Bank.dto.AccountDTO> accounts;
+    private List<AccountDTO> accounts;
     private List<ClientLoanDTO> loans;
     private List<CardDTO> cards;
     public ClientDTO(Client client) {
@@ -48,7 +48,7 @@ public class ClientDTO  {
         return email;
     }
 
-    public List<com.mindhubbrothers.Mindhub.Brothers.Bank.dto.AccountDTO> getAccounts() {
+    public List<AccountDTO> getAccounts() {
         return accounts;
     }
     public List<ClientLoanDTO> getLoans() {

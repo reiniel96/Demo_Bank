@@ -1,6 +1,6 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.LoanType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.LoanType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

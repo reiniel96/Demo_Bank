@@ -1,18 +1,22 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.CardColor;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.CardType;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.LoanType;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.TransactionType;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.models. *;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardColor;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.LoanType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.*;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.mindhubbrothers.Mindhub.Brothers.Bank.utils.utils.genAccountId;
 
 @SpringBootApplication
 public class MindhubBrothersBankApplication {
@@ -20,36 +24,37 @@ public class MindhubBrothersBankApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MindhubBrothersBankApplication.class, args);
 	}
-
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	@Bean
 	public CommandLineRunner initData(ClientRepository ClientRepository,
 									  AccountRepository AccountRepository,
 									  TransactionRepository TransactionRepository,
 									  LoanRepository LoanRepository,
 									  ClientLoanRepository ClientLoanRepository,
-									  com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.CardRepository CardRepository) {
+									  CardRepository CardRepository) {
 		return (args) -> {
 
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client Melba= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client("Gonza", "Legarda","gonzalegarda@gmail.com");
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client Chloe= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client("Ema", "O'Raspu","emaoraspu@gmail.com");
+			Client Melba= new Client("Melba", "Morel","MelMor@email.com", passwordEncoder.encode("123mel"));
+			Client Chloe= new Client("Chloe", "O'Brian","ChlObri@email.com", passwordEncoder.encode("123cloe"));
 			ClientRepository.save(Melba);
 			ClientRepository.save(Chloe);
 
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account cuenta1= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account("VIN"+String.format("%03d",AccountRepository.count()+1 ),35000.0,LocalDate.now());
+			Account cuenta1= new Account(genAccountId(AccountRepository),28000.0,LocalDate.now());
 			Melba.addAccount(cuenta1);
 			AccountRepository.save(cuenta1);
 
 
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account cuenta2= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account("VIN"+String.format("%03d", AccountRepository.count()+1),25000.0,LocalDate.now());
+			Account cuenta2= new Account(genAccountId(AccountRepository),28000.0,LocalDate.now());
 			Melba.addAccount(cuenta2);
 			AccountRepository.save(cuenta2);
 
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account cuenta3= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account("VIN"+String.format("%03d", AccountRepository.count()+1),10000.0,LocalDate.now());
+			Account cuenta3= new Account(genAccountId(AccountRepository),28000.0,LocalDate.now());
 			Chloe.addAccount(cuenta3);
 			AccountRepository.save(cuenta3);
 
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction transaction1=new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction(TransactionType.CREDIT,125000.0,"Pago de Proyecto");
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction transaction2=new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction(TransactionType.DEBIT,500.0,"Carga de sube");
+			Transaction transaction1=new Transaction(TransactionType.CREDIT,125000.0,"Pago de Proyecto");
+			Transaction transaction2=new Transaction(TransactionType.DEBIT,500.0,"Carga de sube");
 
 			cuenta1.addTransaction(transaction1);
 			cuenta1.addTransaction(transaction2);
@@ -58,13 +63,15 @@ public class MindhubBrothersBankApplication {
 			TransactionRepository.save(transaction2);
 
 			List<Integer> payments = List.of(2, 4,6,12,24);
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan1= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan(LoanType.mortgage, 300000, payments);
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan2= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan(LoanType.personal, 20000, payments);
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan3= new com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan(LoanType.automotive, 1500, payments);
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan clientLoan1 =new com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan();
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan clientLoan2=new com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan();
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan clientLoan3=new com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan();
-			com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan clientLoan4=new com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan();			Melba.addClientLoan(clientLoan1);
+			Loan loan1= new Loan(LoanType.mortgage, 300000, payments);
+			Loan loan2= new Loan(LoanType.personal, 20000, payments);
+			Loan loan3= new Loan(LoanType.automotive, 1500, payments);
+			ClientLoan clientLoan1 =new ClientLoan();
+			ClientLoan clientLoan2=new ClientLoan();
+			ClientLoan clientLoan3=new ClientLoan();
+			ClientLoan clientLoan4=new ClientLoan();
+
+			Melba.addClientLoan(clientLoan1);
 			Melba.addClientLoan(clientLoan2);
 			Melba.addClientLoan(clientLoan3);
 
@@ -87,26 +94,20 @@ public class MindhubBrothersBankApplication {
 			Card card1 = new Card(
 					CardType.DEBIT,
 					CardColor.GOLD,
-					"4512-4587-6584-5415",
-					120,
-					LocalDate.now(),
-					LocalDate.now().plusYears(6)
+					LocalDate.now()
+
 			);
 			Card card2 = new Card(
 					CardType.CREDIT,
 					CardColor.TITANIUM,
-					"6514-4875-5124-6541",
-					320,
-					LocalDate.now(),
-					LocalDate.now().plusYears(3)
+					LocalDate.now()
+
 			);
 			Card card3 = new Card(
 					CardType.CREDIT,
 					CardColor.SILVER,
-					"8451-8752-6481-6512",
-					903,
-					LocalDate.now(),
-					LocalDate.now().plusYears(5)
+					LocalDate.now()
+
 			);
 
 			card1.addCardHolder(Melba);

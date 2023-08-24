@@ -1,6 +1,6 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.TransactionType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;

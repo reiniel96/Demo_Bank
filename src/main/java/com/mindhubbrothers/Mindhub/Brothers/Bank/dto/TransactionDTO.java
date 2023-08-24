@@ -1,6 +1,6 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.TransactionType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction;
 
 import java.time.LocalDate;

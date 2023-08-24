@@ -1,7 +1,7 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.LoanType;
+
 
 import java.util.List;
 

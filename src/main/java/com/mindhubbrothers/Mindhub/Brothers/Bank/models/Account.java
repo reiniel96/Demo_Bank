@@ -71,20 +71,20 @@ public class Account {
                 '}';
     }
 
-    public com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client getOwner() {
+    public Client getOwner() {
 
         return owner;
     }
 
-    public void setOwner(com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client owner) {
+    public void setOwner(Client owner) {
         this.owner = owner;
     }
 
-    public Set<com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction> getTransactions() {
+    public Set<Transaction> getTransactions() {
         return transactions;
     }
 
-    public void addTransaction(com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction transaction) {
+    public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);
         transactions.add(transaction);
 

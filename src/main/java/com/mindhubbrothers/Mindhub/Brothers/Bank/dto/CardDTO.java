@@ -1,7 +1,7 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.CardColor;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.CardType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardColor;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Card;
 
 import java.time.LocalDate;

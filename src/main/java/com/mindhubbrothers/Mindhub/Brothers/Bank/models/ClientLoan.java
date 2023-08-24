@@ -1,11 +1,9 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.LoanType;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 public class ClientLoan{
@@ -37,11 +35,11 @@ public class ClientLoan{
         this.client = client;
     }
 
-    public com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan getLoan() {
+    public Loan getLoan() {
         return loan;
     }
 
-    public void setLoan(com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan) {
+    public void setLoan(Loan loan) {
         this.loan = loan;
     }
 

@@ -1,11 +1,12 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.CardColor;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.Enums.CardType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardColor;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Random;
 
 @Entity
 public class Card {
@@ -28,13 +29,13 @@ public class Card {
 
     public Card(){};
 
-    public Card( CardType type, CardColor color, String number, Integer cvv, LocalDate fromDate, LocalDate thruDate) {
+    public Card( CardType type, CardColor color, LocalDate fromDate) {
         this.type = type;
         this.color = color;
-        this.number = number;
-        this.cvv = cvv;
+        setNumber();
+        setCvv(this.number);
         this.fromDate = fromDate;
-        this.thruDate = thruDate;
+        setThruDate(fromDate);
     }
 
     public Long getId() {
@@ -65,16 +66,29 @@ public class Card {
         return number;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setNumber() {
+        String cardNumber = "8545";
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) {
+            cardNumber += "-" + String.format("%04d", random.nextInt(10000));
+        }
+        this.number = cardNumber;
     }
 
     public Integer getCvv() {
         return cvv;
     }
 
-    public void setCvv(Integer cvv) {
-        this.cvv = cvv;
+    public void setCvv(String cardNumber) {
+        int sum = 0;
+        for (String bloque : cardNumber.split("-")) {
+            int aux = 0;
+            for (int i = 0; i < 3; i++) {
+                aux += Character.getNumericValue(bloque.charAt(i));
+            }
+            sum += aux;
+        }
+        this.cvv= 300+(sum % 10000);
     }
 
     public LocalDate getFromDate() {
