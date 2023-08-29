@@ -16,7 +16,7 @@ public class ClientLoan{
     private Client client;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private com.mindhubbrothers.Mindhub.Brothers.Bank.models.Loan loan;
+    private Loan loan;
 
     public ClientLoan(){}
 

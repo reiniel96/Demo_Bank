@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.mindhubbrothers.Mindhub.Brothers.Bank.utils.utils.genAccountId;
+import static com.mindhubbrothers.Mindhub.Brothers.Bank.utils.utils.*;
 
 @SpringBootApplication
 public class MindhubBrothersBankApplication {
@@ -24,8 +24,8 @@ public class MindhubBrothersBankApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MindhubBrothersBankApplication.class, args);
 	}
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+@Autowired
+private PasswordEncoder passwordEncoder;
 	@Bean
 	public CommandLineRunner initData(ClientRepository ClientRepository,
 									  AccountRepository AccountRepository,
@@ -110,14 +110,20 @@ public class MindhubBrothersBankApplication {
 
 			);
 
+			card1.setNumber(genRandomCardNumber());
+			card1.setCvv(genCvv(card1.getNumber()));
 			card1.addCardHolder(Melba);
-			card2.addCardHolder(Melba);
-			card3.addCardHolder(Chloe);
-
 			CardRepository.save(card1);
-			CardRepository.save(card2);
-			CardRepository.save(card3);
 
+			card2.setNumber(genRandomCardNumber());
+			card2.setCvv(genCvv(card2.getNumber()));
+			card2.addCardHolder(Melba);
+			CardRepository.save(card2);
+
+			card3.setNumber(genRandomCardNumber());
+			card3.setCvv(genCvv(card3.getNumber()));
+			card3.addCardHolder(Chloe);
+			CardRepository.save(card3);
 
 		};
 	}
