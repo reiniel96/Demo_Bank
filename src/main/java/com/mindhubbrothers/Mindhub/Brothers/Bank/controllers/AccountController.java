@@ -35,7 +35,10 @@ public class AccountController {
                 .collect(toList());
     }
     @RequestMapping("/accounts/{id}")
-    public AccountDTO getById(@PathVariable Long id){
+    public AccountDTO getById(@PathVariable Long id, Authentication authentication){
+        if(!accountRepository.findById(id).get().getOwner().getEmail().equals(authentication.getName())){
+            return null;
+        }
         return new AccountDTO(accountRepository.findById(id).orElse(null));
     }
 

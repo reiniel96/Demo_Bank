@@ -6,7 +6,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Random;
 
 @Entity
 public class Card {
@@ -16,9 +15,10 @@ public class Card {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name="cardHolder_id")
-    private Client cardHolder;
+    @JoinColumn(name="owner_id")
+    private Client owner;
 
+    private String cardHolder;
     private CardType type;
     private CardColor color;
     private String number;
@@ -32,8 +32,6 @@ public class Card {
     public Card( CardType type, CardColor color, LocalDate fromDate) {
         this.type = type;
         this.color = color;
-        setNumber();
-        setCvv(this.number);
         this.fromDate = fromDate;
         setThruDate(fromDate);
     }
@@ -66,29 +64,16 @@ public class Card {
         return number;
     }
 
-    public void setNumber() {
-        String cardNumber = "8545";
-        Random random = new Random();
-        for (int i = 0; i < 3; i++) {
-            cardNumber += "-" + String.format("%04d", random.nextInt(10000));
-        }
-        this.number = cardNumber;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public Integer getCvv() {
         return cvv;
     }
 
-    public void setCvv(String cardNumber) {
-        int sum = 0;
-        for (String bloque : cardNumber.split("-")) {
-            int aux = 0;
-            for (int i = 0; i < 3; i++) {
-                aux += Character.getNumericValue(bloque.charAt(i));
-            }
-            sum += aux;
-        }
-        this.cvv= 300+(sum % 10000);
+    public void setCvv(Integer cvv) {
+        this.cvv = cvv;
     }
 
     public LocalDate getFromDate() {
@@ -104,18 +89,25 @@ public class Card {
     }
 
     public void setThruDate(LocalDate thruDate) {
-        this.thruDate = thruDate;
+        this.thruDate = this.fromDate.plusYears(5);
     }
 
-    public Client getCardHolder() {
-
+    public String getCardHolder() {
         return cardHolder;
     }
 
     public void addCardHolder(Client client) {
-        this.cardHolder = client;
+        this.cardHolder = client.getFirstName() + " " + client.getLastName();
+        this.owner = client;
     }
 
+    public Client getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Client owner) {
+        this.owner = owner;
+    }
 
     @Override
     public String toString() {
@@ -130,4 +122,6 @@ public class Card {
                 '}';
 
     }
+
+
 }

@@ -19,10 +19,10 @@ public class Account {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="owner_id")
-    private com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client owner;
+    private Client owner;
 
     @OneToMany(mappedBy="account", fetch=FetchType.EAGER)
-    private Set<com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction> transactions = new HashSet<>();
+    private Set<Transaction> transactions = new HashSet<>();
 
     public Account(){};
 
