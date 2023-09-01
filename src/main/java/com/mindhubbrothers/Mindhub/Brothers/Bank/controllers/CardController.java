@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.mindhubbrothers.Mindhub.Brothers.Bank.utils.utils.genCvv;
+import static com.mindhubbrothers.Mindhub.Brothers.Bank.utils.utils.genRandomCardNumber;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -45,24 +47,28 @@ public class CardController {
     }
 
     @RequestMapping("/clients/current/cards")
-    public ResponseEntity<Object> createCard(@RequestParam CardType cardType, @RequestParam CardColor cardColor, Authentication authentication) {
+    public ResponseEntity<Object> createCard(@RequestParam  CardType cardType, @RequestParam CardColor cardColor, Authentication authentication) {
+
+        Client AuthClient = clientRepository.findByEmail(authentication.getName());
 
 
-        long count = clientRepository.findByEmail(authentication.getName())
-                .getCards()
-                .stream()
-                .filter(card -> card.getType().equals(cardType)).count();
-
-        if (count == 3) {
-            return new ResponseEntity<>("Already have 3 cards of " + cardType, HttpStatus.FORBIDDEN);
+        if (cardRepository.findByOwner(AuthClient).stream()
+                .anyMatch(card -> card.getType().equals(cardType) && card.getColor().equals(cardColor))) {
+            return new ResponseEntity<>("Already have a "+cardType+" card "+cardColor+".", HttpStatus.FORBIDDEN);
         }
 
+        Card newCard = new Card(cardType, cardColor, LocalDate.now());
 
-        Card newCard= new Card(cardType, cardColor, LocalDate.now());
-        Client AuthClient = clientRepository.findByEmail(authentication.getName());
+        do {
+            newCard.setNumber(genRandomCardNumber());
+        } while (cardRepository.findByNumber(newCard.getNumber()) != null);
+
+        newCard.setCvv(genCvv(newCard.getNumber()));
+
         AuthClient.addCard(newCard);
         cardRepository.save(newCard);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 }

@@ -2,7 +2,7 @@ package com.mindhubbrothers.Mindhub.Brothers.Bank;
 
 import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardColor;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardType;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.LoanType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.RoleType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.*;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.*;
@@ -37,8 +37,12 @@ private PasswordEncoder passwordEncoder;
 
 			Client Melba= new Client("Melba", "Morel","MelMor@email.com", passwordEncoder.encode("123mel"));
 			Client Chloe= new Client("Chloe", "O'Brian","ChlObri@email.com", passwordEncoder.encode("123cloe"));
+			Client Admin= new Client("admin", "admin","admin@email.com", passwordEncoder.encode("admin"));
 			ClientRepository.save(Melba);
 			ClientRepository.save(Chloe);
+
+			Admin.setRole(RoleType.valueOf("ADMIN"));
+			ClientRepository.save(Admin);
 
 			Account cuenta1= new Account(genAccountId(AccountRepository),28000.0,LocalDate.now());
 			Melba.addAccount(cuenta1);
@@ -63,9 +67,9 @@ private PasswordEncoder passwordEncoder;
 			TransactionRepository.save(transaction2);
 
 			List<Integer> payments = List.of(2, 4,6,12,24);
-			Loan loan1= new Loan(LoanType.mortgage, 300000, payments);
-			Loan loan2= new Loan(LoanType.personal, 20000, payments);
-			Loan loan3= new Loan(LoanType.automotive, 1500, payments);
+			Loan loan1= new Loan("mortgage", 400000, payments);
+			Loan loan2= new Loan("personal", 30000, payments);
+			Loan loan3= new Loan("automotive", 1000, payments);
 			ClientLoan clientLoan1 =new ClientLoan();
 			ClientLoan clientLoan2=new ClientLoan();
 			ClientLoan clientLoan3=new ClientLoan();
