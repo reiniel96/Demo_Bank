@@ -87,7 +87,7 @@ public class LoanController {
         }
 
         // Verificar que el monto solicitado no supere el máximo permitido
-        if (loanApplicationDTO.getAmount() > loan.getMaxAmount()) {
+        if (loanApplicationDTO.getAmount() > loan.getMaxAccount()) {
             mensaje = "Loan amount exceeds the maximum allowed.";
             return new ResponseEntity<>(mensaje, HttpStatus.BAD_REQUEST);
         }
