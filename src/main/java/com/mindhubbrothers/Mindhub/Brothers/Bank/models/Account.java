@@ -1,5 +1,6 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.models;
 
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TypeAccounts;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -9,31 +10,40 @@ import java.util.Set;
 
 @Entity
 public class Account {
+
     @Id
+    @GenericGenerator(name= "native", strategy = "native")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
+
     private String number;
+    private LocalDate creationDate;
     private Double balance;
-    private LocalDate date;
+    private TypeAccounts typeAccounts;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="owner_id")
-    private Client owner;
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-    @OneToMany(mappedBy="account", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
     private Set<Transaction> transactions = new HashSet<>();
 
-    public Account(){};
+    public Account(String s, double v, LocalDate now) { }
 
-    public Account(String number,Double balance, LocalDate date) {
-        this.number=number;
+    public Account(String number, LocalDate creationDate, Double balance, TypeAccounts typeAccounts) {
+        this.number = number;
+        this.creationDate = creationDate;
         this.balance = balance;
-        this.date = date;
+        this.typeAccounts = typeAccounts;
     }
 
-    public String getNumber() {
-        return number;
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public Long getId() {
@@ -44,6 +54,19 @@ public class Account {
         this.id = id;
     }
 
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
 
     public Double getBalance() {
         return balance;
@@ -53,41 +76,19 @@ public class Account {
         this.balance = balance;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id='" + id + '\'' +
-                ", balance=" + balance +
-                ", number=" + number +
-                ", date=" + date +
-                '}';
-    }
-
-    public Client getOwner() {
-
-        return owner;
-    }
-
-    public void setOwner(Client owner) {
-        this.owner = owner;
-    }
-
     public Set<Transaction> getTransactions() {
         return transactions;
     }
-
-    public void addTransaction(Transaction transaction) {
+    public void addTransaction(Transaction transaction){
         transaction.setAccount(this);
-        transactions.add(transaction);
-
+        this.transactions.add(transaction);
     }
+    public TypeAccounts getTypeAccounts() {
+        return typeAccounts;
+    }
+    public void setTypeAccounts(TypeAccounts typeAccounts) {
+        this.typeAccounts = typeAccounts;
+    }
+
 
 }

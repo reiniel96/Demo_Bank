@@ -10,30 +10,41 @@ import java.time.LocalDate;
 @Entity
 public class Card {
     @Id
+    @GenericGenerator(name= "native", strategy = "native")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name="owner_id")
-    private Client owner;
-
     private String cardHolder;
     private CardType type;
     private CardColor color;
     private String number;
-    private Integer cvv;
-    private LocalDate fromDate;
+    private int cvv;
     private LocalDate thruDate;
+    private LocalDate fromDate;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-    public Card(){};
+    public Card (CardType cardType, CardColor cardColor, LocalDate now){
+    }
 
-    public Card( CardType type, CardColor color, LocalDate fromDate) {
+    public Card(String cardHolder, CardType type, CardColor color, String number, int cvv, LocalDate thruDate, LocalDate fromDate, Client client) {
+        this.cardHolder = client.getFirstName() + ' ' + client.getLastName();
         this.type = type;
         this.color = color;
+        this.number = number;
+        this.cvv = cvv;
+        this.thruDate = thruDate;
         this.fromDate = fromDate;
-        setThruDate(fromDate);
+    }
+
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public Long getId() {
@@ -42,6 +53,12 @@ public class Card {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    public String getCardHolder() {
+        return cardHolder;
+    }
+    public void setCardHolder(String cardHolder) {
+        this.cardHolder = client.getFirstName() + ' ' + client.getLastName();
     }
 
     public CardType getType() {
@@ -68,60 +85,23 @@ public class Card {
         this.number = number;
     }
 
-    public Integer getCvv() {
+    public int getCvv() {
         return cvv;
     }
 
-    public void setCvv(Integer cvv) {
+    public void setCvv(int cvv) {
         this.cvv = cvv;
     }
-
-    public LocalDate getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(LocalDate fromDate) {
-        this.fromDate = fromDate;
-    }
-
     public LocalDate getThruDate() {
         return thruDate;
     }
-
     public void setThruDate(LocalDate thruDate) {
-        this.thruDate = this.fromDate.plusYears(5);
+        this.thruDate = thruDate;
     }
-
-    public String getCardHolder() {
-        return cardHolder;
+    public LocalDate getFromDate() {
+        return fromDate;
     }
-
-    public void addCardHolder(Client client) {
-        this.cardHolder = client.getFirstName() + " " + client.getLastName();
-        this.owner = client;
+    public void setFromDate(LocalDate fromDate) {
+        this.fromDate = fromDate;
     }
-
-    public Client getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Client owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public String toString() {
-        return "Card{" +
-                "id=" + id +
-                ", type=" + type +
-                ", color=" + color +
-                ", number=" + number +
-                ", cvv=" + cvv +
-                ", fromDate=" + fromDate +
-                ", thruDate=" + thruDate +
-                '}';
-
-    }
-
-
 }

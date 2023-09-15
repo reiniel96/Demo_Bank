@@ -1,7 +1,12 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.controllers;
 
 import com.mindhubbrothers.Mindhub.Brothers.Bank.dto.TransactionDTO;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Transaction;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.AccountRepository;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.services.AccountService;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.services.ClientService;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,68 +15,77 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
+import static com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType.CREDIT;
+import static com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType.DEBIT;
+
+
 @RestController
 @RequestMapping("/api")
 public class TransactionController {
-    @Autowired
-    private AccountRepository accountRepository;
+
     @Autowired
     private TransactionService transactionService;
-    @RequestMapping(value = "/transactions",method = RequestMethod.GET)
-    public List<TransactionDTO> getAll(){
-        return transactionService.getAll();
-    }
-    @RequestMapping(value = "/transactions/{id}",method = RequestMethod.GET)
-    public TransactionDTO getById(@PathVariable Long id){
-        return transactionService.getById(id);
-    }
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private ClientService clientService;
+
     @Transactional
-    @RequestMapping(value = "/transactions",method = RequestMethod.POST)
-    public ResponseEntity makeTransaction(
-            @RequestParam Double amount, @RequestParam String description ,
-            @RequestParam(value = "fromAccountNumber") String accountFromNumber, @RequestParam String toAccountNumber,
-            Authentication authentication){
+    @RequestMapping (path = "/transactions",method = RequestMethod.POST)
+    public ResponseEntity<Object> createdTransaction(Authentication authentication,
+                                                     @RequestParam Double amount,
+                                                     @RequestParam String description,
+                                                     @RequestParam String numberDestiny,
+                                                     @RequestParam String numberOrigin){
 
+        Client client = clientService.findByEmail(authentication.getName());
+        Account accountDestiny=accountService.findByNumber(numberDestiny);
+        Account accountOrigin=accountService.findByNumber(numberOrigin);
+        Set<Account> setNumberOrigin= client.getAccounts();
+        String mensaje = " ";
 
-        //verificamos que los parametros no esten vacios
-        if (amount == null || description == null || accountFromNumber == null || toAccountNumber == null) {
-            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        if ((amount == null) || (description == null) || (numberDestiny == null) || (numberOrigin == null)){
+            mensaje = "403 Empty parameters";
+            return new ResponseEntity<>(mensaje, HttpStatus.FORBIDDEN);
         }
-        //verificamos que el numero de cuenta de origen y destino no sean iguales
-        if (accountFromNumber.equals(toAccountNumber)) {
-            return new ResponseEntity<>("The origin and destination accounts are the same", HttpStatus.FORBIDDEN);
+        if (accountOrigin==null){
+            mensaje = "403 The account does not exist";
+            return new ResponseEntity<>(mensaje,HttpStatus.FORBIDDEN);
         }
-        //verificamos que el numero de cuenta de origen exista
-        if (accountRepository.findByNumber(accountFromNumber) == null) {
-            return new ResponseEntity<>("The origin account does not exist", HttpStatus.FORBIDDEN);
+        if (accountDestiny==null){
+            mensaje = "Destination account does not exist";
+            return new ResponseEntity<>(mensaje,HttpStatus.FORBIDDEN);
         }
-        //verificamos que el numero de cuenta de destino exista
-        if (accountRepository.findByNumber(toAccountNumber) == null) {
-            return new ResponseEntity<>("The destination account does not exist", HttpStatus.FORBIDDEN);
+        if (numberOrigin.equals(numberDestiny)){
+            mensaje = "403 the accounts are the same";
+            return new ResponseEntity<>(mensaje, HttpStatus.FORBIDDEN);
         }
-        //verificamos que el numero de cuenta de origen pertenezca al cliente logueado
-        if (!accountRepository.findByNumber(accountFromNumber).getOwner().getEmail().equals(authentication.getName())) {
-            return new ResponseEntity<>("The origin account does not belong to the logged in client", HttpStatus.FORBIDDEN);
+        if (setNumberOrigin.contains(numberOrigin)) {
+            mensaje = "403 UNAUTHENTICATED ACCOUNT";
+            return new ResponseEntity<>(mensaje, HttpStatus.FORBIDDEN);
         }
-        //vericiamos que hayta fondos en la cuenta origen
-        if (accountRepository.findByNumber(accountFromNumber).getBalance() < amount) {
-            return new ResponseEntity<>("Insufficient funds", HttpStatus.FORBIDDEN);
+        if (accountOrigin.getBalance()< amount || amount <= 0){
+            mensaje = "You do not have enough balance to make the transaction";
+            return new ResponseEntity<>(mensaje,HttpStatus.FORBIDDEN);
         }
-        //verificamos que el monto sea mayor a 0
-        if (amount <= 0) {
-            return new ResponseEntity<>("The amount must be greater than 0", HttpStatus.FORBIDDEN);
-        }
+        Transaction transactionsOrigin=new Transaction(CREDIT,amount,accountOrigin.getNumber()+description, LocalDateTime.now());
+        Transaction transactionsDestiny=new Transaction(DEBIT,amount,accountDestiny.getNumber()+description,LocalDateTime.now());
+        transactionService.saveTransaction(transactionsOrigin);
+        transactionService.saveTransaction(transactionsDestiny);
 
-        transactionService.makeTransaction(amount,description,accountFromNumber,toAccountNumber,authentication);
+        Double auxOrigin=accountOrigin.getBalance()-amount;
+        Double auxDestiny=accountDestiny.getBalance()+amount;
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        accountOrigin.setBalance(auxOrigin);
+        accountDestiny.setBalance(auxDestiny);
+        accountService.saveAccount(accountDestiny);
+        accountService.saveAccount(accountOrigin);
 
+        mensaje = "201 Successful transfer";
+        return new ResponseEntity<>(mensaje,HttpStatus.CREATED);
     }
 }
-
-
-
-
-
-

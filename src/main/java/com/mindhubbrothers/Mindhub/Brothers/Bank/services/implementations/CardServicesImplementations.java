@@ -56,4 +56,23 @@ public class CardServicesImplementations implements CardService {
     }
 
 
+    @Override
+    public List<CardDTO> getCardsDTO() {
+        return null;
+    }
+
+    @Override
+    public CardDTO getCardDTO(long id) {
+        return null;
+    }
+
+    @Override
+    public Card findById(long id) {
+        return null;
+    }
+
+    @Override
+    public void saveCard(Card card) {
+
+    }
 }

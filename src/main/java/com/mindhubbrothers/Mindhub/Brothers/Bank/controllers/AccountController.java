@@ -1,66 +1,84 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.controllers;
 
 import com.mindhubbrothers.Mindhub.Brothers.Bank.dto.AccountDTO;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.AccountRepository;
-import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.ClientRepository;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TypeAccounts;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Account;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.services.AccountService;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class AccountController {
+
+    @Autowired
+    private ClientService clientService;
     @Autowired
     private AccountService accountService;
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private ClientRepository clientRepository;
 
     @RequestMapping("/accounts")
-    public List<AccountDTO> getAll(){
-        return accountService.getAll();
+    public List<AccountDTO> getAccountsDTO(){
+        return accountService.getAccountsDTO();
     }
     @RequestMapping("/accounts/{id}")
-    public AccountDTO getById(@PathVariable Long id, Authentication authentication){
+    public AccountDTO getAccount(@PathVariable Long id){
+        return accountService.getAccountDTOCurrent(id);
+    }
 
-        if(!accountRepository.findById(id).get().getOwner().getEmail().equals(authentication.getName())){
-            return null;
+    @GetMapping("/clients/current/accounts")
+    public ResponseEntity<List<AccountDTO>> getClientAccounts(Authentication authentication) {
+        Client client = clientService.findByEmail(authentication.getName());
+        List<Account> accounts = accountService.findByClientList(client);
+        return new ResponseEntity<>(accounts.stream()
+                .map(AccountDTO::new)
+                .collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    @PostMapping("/clients/current/accounts")
+    public ResponseEntity<Object> registerAccount(Authentication authentication,
+                                                  @RequestParam String typeAccounts) {
+        Client client = clientService.findByEmail(authentication.getName());
+        String mensaje = "";
+
+        if (client == null) {
+            mensaje = "Client not found";
+            return new ResponseEntity<>(mensaje, HttpStatus.NOT_FOUND);
         }
 
-        return accountService.getById(id, authentication);
-    }
-
-    @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.GET)
-
-    public List<AccountDTO> getCurrentAccounts( Authentication authentication) {
-
-        return accountService.getCurrentAccounts(authentication);
-    }
-
-    @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
-
-    public ResponseEntity<Object> createAccount( Authentication authentication) {
-
-
-        if (clientRepository.findByEmail(authentication.getName()).getAccounts().stream().count()==3) {
-
-            return new ResponseEntity<>("Already have 3 accounts", HttpStatus.FORBIDDEN);
-
+        List<Account> accounts = accountService.findByClientList(client);
+        if (accounts.size() >=3) {
+            mensaje = "Can't create more accounts";
+            return new ResponseEntity<>(mensaje, HttpStatus.FORBIDDEN);
         }
 
-        accountService.createAccount(authentication);
+        String number = "VIN" + getStringRandomNumber();
+        TypeAccounts typeAccount = TypeAccounts.valueOf(typeAccounts);
+        Account account = new Account( number, LocalDate.now(), 0.00, typeAccount);
+        client.addAccount(account);
+        accountService.saveAccount(account);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
-
+        mensaje= "New account created";
+        return new ResponseEntity<>(mensaje, HttpStatus.CREATED);
     }
 
+    int min = 00000000;
+    int max = 99999999;
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
+
+    public String getStringRandomNumber() {
+        int randomNumber = getRandomNumber(min, max);
+        return String.valueOf(randomNumber);
+    }
 }

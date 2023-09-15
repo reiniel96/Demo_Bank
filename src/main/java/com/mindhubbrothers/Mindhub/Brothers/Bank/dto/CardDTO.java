@@ -5,67 +5,60 @@ import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Card;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class CardDTO {
-
     private Long id;
-    private CardType type;
     private String cardHolder;
+    private CardType type;
     private CardColor color;
     private String number;
-    private Integer cvv;
-    private LocalDate fromDate;
+    private int cvv;
     private LocalDate thruDate;
+    private LocalDate fromDate;
+    private List<CardDTO> cards;
 
     public CardDTO(Card card) {
-        this.id = card.getId();
-        this.type = card.getType();
-        this.cardHolder =card.getCardHolder();
-        this.color = card.getColor();
-        this.number = card.getNumber();
-        this.cvv = card.getCvv();
-        this.fromDate = card.getFromDate();
-        this.thruDate = card.getThruDate();
+        id = card.getId();
+        cardHolder = card.getCardHolder();
+        type = card.getType();
+        color = card.getColor();
+        number = card.getNumber();
+        cvv = card.getCvv();
+        thruDate = card.getThruDate();
+        fromDate = card.getFromDate();
     }
 
     public Long getId() {
         return id;
     }
-
-
+    public String getCardHolder() {
+        return cardHolder;
+    }
 
     public CardType getType() {
         return type;
     }
 
-    public String getCardHolder() {
-        return cardHolder;
-    }
-
-
     public CardColor getColor() {
         return color;
     }
-
 
     public String getNumber() {
         return number;
     }
 
-
-    public Integer getCvv() {
+    public int getCvv() {
         return cvv;
     }
-
-
+    public LocalDate getThruDate() {
+        return thruDate;
+    }
     public LocalDate getFromDate() {
         return fromDate;
     }
 
-
-
-    public LocalDate getThruDate() {
-        return thruDate;
+    public List<CardDTO> getCards() {
+        return cards;
     }
-
 }

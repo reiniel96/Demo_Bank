@@ -4,6 +4,7 @@ import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.TransactionType;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Transaction {
@@ -19,7 +20,7 @@ public class Transaction {
     @JoinColumn(name="account_id")
     private Account account;
 
-    public Transaction(){};
+    public Transaction(TransactionType credit, Double loanInterest, String s, LocalDateTime now){};
 
     public Transaction(TransactionType type, Double amount, String description) {
         this.type = type;

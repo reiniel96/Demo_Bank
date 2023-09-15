@@ -9,14 +9,14 @@ import java.util.List;
 
 public interface ClientService {
     List<ClientDTO> getClientsDTO();
-
+    ClientDTO getClientDTO (long id);
+    ClientDTO getClientDTOByEmailCurrent(String email);
+    Client findById (long id);
+    Client findByEmail (String email);
     void saveClient(Client client);
 
     ClientDTO getClientsDTOById(Long id);
 
     ClientDTO getCurrentClient(Authentication authentication);
-
-    interface ClientLoanService {
-        void saveClientLoan(ClientLoan clientLoan);
-    }
 }
+

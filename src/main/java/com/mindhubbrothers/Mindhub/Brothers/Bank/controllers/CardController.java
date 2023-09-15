@@ -4,54 +4,114 @@ package com.mindhubbrothers.Mindhub.Brothers.Bank.controllers;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.dto.CardDTO;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardColor;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.CardType;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Card;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.Client;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.CardRepository;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.repositories.ClientRepository;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.services.CardService;
+import com.mindhubbrothers.Mindhub.Brothers.Bank.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class CardController {
 
     @Autowired
-    private CardRepository cardRepository;
-    @Autowired
-    private ClientRepository clientRepository;
-    @Autowired
     private CardService cardService;
+    @Autowired
+    private ClientService clientService;
+
     @RequestMapping("/cards")
-    public List<CardDTO> getAll(){
-        return cardService.getAllCardsDto();
+    public List<CardDTO> getCardsDTO() {
+        return cardService.getCardsDTO();
     }
+
     @RequestMapping("/cards/{id}")
-    public CardDTO getById(@PathVariable Long id){
-        return cardService.getById(id);
+    public CardDTO getCardDTO(@PathVariable Long id) {
+        return cardService.getCardDTO(id);
     }
 
 
-    @RequestMapping("/clients/current/cards")
-    public ResponseEntity<Object> createCard(@RequestParam  CardType cardType, @RequestParam CardColor cardColor, Authentication authentication) {
 
-        Client AuthClient = clientRepository.findByEmail(authentication.getName());
+    @RequestMapping(path = "clients/current/cards", method = RequestMethod.POST)
+    public ResponseEntity<Object> createCard(Authentication authentication,
+                                             @RequestParam CardType cardType,
+                                             @RequestParam CardColor cardColor) {
 
+        Client clientCurrent = clientService.findByEmail(authentication.getName());
+        String mensaje = " ";
 
-        if (cardRepository.findByOwner(AuthClient).stream()
-                .anyMatch(card -> card.getType().equals(cardType) && card.getColor().equals(cardColor))) {
-            return new ResponseEntity<>("Already have a "+cardType+" card "+cardColor+".", HttpStatus.FORBIDDEN);
+        // Verificar si el cliente ya tiene una tarjeta del mismo tipo y color
+        boolean hasDuplicateCard = clientCurrent.getCards()
+                .stream()
+                .anyMatch(card -> card.getType() == cardType && card.getColor() == cardColor);
+
+        if (hasDuplicateCard) {
+            mensaje = "Cannot create another card of the same type and color.";
+            return new ResponseEntity<>(mensaje, HttpStatus.FORBIDDEN);
         }
 
-        cardService.createCard(cardType, cardColor, AuthClient);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        List<Card> listCard = clientCurrent
+                .getCards()
+                .stream()
+                .filter(card ->
+                        card.getType() == cardType
+                )
+                .collect(Collectors.toList());
+
+        if (listCard.size() >= 3) {
+            mensaje = "Cannot create more cards of this type.";
+            return new ResponseEntity<>(mensaje, HttpStatus.FORBIDDEN);
+        }
+
+        String cardNumber = getRandomStringCard();
+        int cvv = getRandomNumber(100, 999);
+
+        LocalDate fromDate = LocalDate.now();
+        LocalDate thruDate = fromDate.plusYears(5);
+        String cardHolder = clientCurrent.getFirstName() + " " + clientCurrent.getLastName();
+
+        Card card = new Card(cardHolder, cardType, cardColor, cardNumber, cvv, thruDate, fromDate, clientCurrent);
+        clientCurrent.addCard(card);
+        cardService.saveCard(card);
+
+        mensaje= "You have successfully created a card.";
+        return new ResponseEntity<>(mensaje, HttpStatus.CREATED);
     }
 
+
+    int min1 = 100;
+    int max1 = 999;
+
+    public int getRandomNumber(int min1, int max1) {
+        return (int) ((Math.random() * (this.max1 - this.min1)) + this.min1);
+    }
+
+    int min2 = 0001;
+    int max2 = 9999;
+
+    public int getRandomCardNumber(int min2, int max2) {
+        return (int) ((Math.random() * (max2 - min2)) - min2);
+    }
+
+    public String getRandomCardNumber() {
+        int randomCardNumber = getRandomCardNumber(min2, max2);
+        return String.valueOf(randomCardNumber);
+    }
+    public String getRandomStringCard() {
+        String cardNumber = "";
+        for (int i = 0; i <= 4; i++) {
+            String targserie = getRandomCardNumber();
+            cardNumber += ("-" + targserie);
+        }
+        return cardNumber.substring(1);
+    }
 }

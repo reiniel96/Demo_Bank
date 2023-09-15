@@ -33,6 +33,26 @@ public class ClientServicesImplementations implements ClientService {
     }
 
     @Override
+    public ClientDTO getClientDTO(long id) {
+        return null;
+    }
+
+    @Override
+    public ClientDTO getClientDTOByEmailCurrent(String email) {
+        return null;
+    }
+
+    @Override
+    public Client findById(long id) {
+        return null;
+    }
+
+    @Override
+    public Client findByEmail(String email) {
+        return null;
+    }
+
+    @Override
     public void saveClient(Client newClient) {
         Account account= new Account("VIN"+String.format("%03d",accountRepository.count()+1) , 0.0, LocalDate.now());
         newClient.addAccount(account);

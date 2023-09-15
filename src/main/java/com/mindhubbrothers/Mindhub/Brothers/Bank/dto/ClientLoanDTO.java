@@ -1,5 +1,6 @@
 package com.mindhubbrothers.Mindhub.Brothers.Bank.dto;
 
+import com.mindhubbrothers.Mindhub.Brothers.Bank.enums.LoanType;
 import com.mindhubbrothers.Mindhub.Brothers.Bank.models.ClientLoan;
 
 
@@ -8,29 +9,27 @@ import java.util.List;
 public class ClientLoanDTO {
 
     private Long id;
-    private String name;
+    private Long loanId;
+    private LoanType name;
     private Double amount;
-    private List<Integer> payments;
+    private Integer payments;
 
-    private long loanId;
-
-    public ClientLoanDTO(ClientLoan clientLoan){
-        this.id = clientLoan.getId();
-        this.loanId = clientLoan.getLoan().getId();
-        this.name = clientLoan.getLoan().getType();
-        this.amount = clientLoan.getLoan().getMaxAmount();
-        this.payments = clientLoan.getLoan().getPayments();
+    public ClientLoanDTO(ClientLoan clientLoan) {
+        id = clientLoan.getId();
+        loanId = clientLoan.getLoan().getId();
+        name = clientLoan.getLoan().getName();
+        amount = clientLoan.getAmount();
+        payments = clientLoan.getPayments();
     }
 
     public Long getId() {
         return id;
     }
-
     public Long getLoanId() {
         return loanId;
     }
 
-    public String getName() {
+    public LoanType getName() {
         return name;
     }
 
@@ -38,7 +37,7 @@ public class ClientLoanDTO {
         return amount;
     }
 
-    public List<Integer> getPayments() {
+    public Integer getPayments() {
         return payments;
     }
 }

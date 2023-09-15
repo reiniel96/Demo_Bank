@@ -52,4 +52,9 @@ public class TransactionServicesImplementations implements TransactionService {
         accountRepository.save(accountRepository.findByNumber(accountFromNumber));
         accountRepository.save(accountRepository.findByNumber(toAccountNumber));
     }
+
+    @Override
+    public void saveTransaction(Transaction transaction) {
+
+    }
 }
